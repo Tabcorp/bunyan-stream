@@ -8,7 +8,7 @@
     "test": "standard && npm run deps && NODE_ENV=test node test",
     "test:cov": "standard && npm run deps && NODE_ENV=test istanbul cover test.js"
   },
-  "repository": "TabDigital/bunyan-stream",
+  "repository": "TabDigital/node-bunyan-stream",
   "keywords": [
     "stream",
     "bunyan",
