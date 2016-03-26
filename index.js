@@ -1,6 +1,6 @@
 const through = require('through2')
-const json = require('JSONStream')
 const assert = require('assert')
+const ndjson = require('ndjson')
 const pump = require('pump')
 
 module.exports = boleStream
@@ -18,11 +18,16 @@ function boleStream (opts, logger) {
 
   opts.level = opts.level || 'info'
 
-  const ts = json.parse()
-  const ws = through({ objectMode: true }, function (chunk, enc, cb) {
-    logger[opts.level](chunk)
-    cb()
-  })
+  const ts = ndjson.parse()
+  const ws = through({ objectMode: true, allowHalfOpen: false }, transform)
+  pump(ts, ws)
 
-  return pump(ts, ws)
+  return ts
+
+  function transform (chunk, enc, cb) {
+    const msg = chunk.message ? chunk.message : ''
+    if (chunk.message) delete chunk.message
+    logger[opts.level](chunk, msg)
+    cb()
+  }
 }
